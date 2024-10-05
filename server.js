@@ -2,9 +2,10 @@ const express = require("express")
 
 const app = express();
 
-const PORT = 4000;
 
 const db = require("./db")
+require("dotenv").config();
+const PORT = process.env.PORT || 4000;
 
 const router = require("./routes/personRoutes")
 const menuRouter = require("./routes/menuItemsRoutes")
@@ -20,7 +21,6 @@ app.get("/", (req,res) => {
 
 app.use("/person",router)
 app.use("/menu",menuRouter)
-
 
 
 
