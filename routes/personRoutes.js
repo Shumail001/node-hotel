@@ -31,6 +31,7 @@ router.get("/", async (req,res) => {
     }
 })
 
+// check by work type
 router.put("/:workType", async(req,res) => {
     try{
         const workType = req.params.workType;

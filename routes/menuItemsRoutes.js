@@ -43,5 +43,19 @@ menuRouter.put("/:taste", async(req,res) => {
     }
 })
 
+router.delete("/remove/:id", async(req,res) => {
+    try{
+        const menuId = req.params.id;
+        console.log(menuId)
+        const response = await Person.findByIdAndDelete(menuId);
+        if(!response){
+            return res.status(400).json("Menu not Found with this id")
+        }
+        return res.status(200).json("Menu deleted Successfully")
+    }catch(err){
+        return res.status(500).json("Internal Server Error");
+    }
+})
+
 
 module.exports = menuRouter;
