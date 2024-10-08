@@ -1,11 +1,12 @@
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
+const bcrypt = require('bcryptjs');
 
 const personSchema = new mongoose.Schema({
-    name:{
+    name: {
         type: String,
         required: true,
     },
-    age:{
+    age: {
         type: Number,
         required: true,
     },
@@ -15,10 +16,10 @@ const personSchema = new mongoose.Schema({
         default: 'chef',
         required: true,
     },
-    mobile:{
+    mobile: {
         type: String,
     },
-    email:{
+    email: {
         type: String,
         required: true,
         unique: true,
@@ -26,14 +27,47 @@ const personSchema = new mongoose.Schema({
     address: {
         type: String,
     },
-    Salary: {
+    salary: {
         type: Number,
-        
+    },
+    username: {
+        type: String,
+        required: true,
+    },
+    password: {
+        type: String,
+        required: true,
     }
 }, 
- {timestamps: true}
-)
+{ timestamps: true });
 
-const Person = new mongoose.model("person",personSchema);
+// Add the pre-save hook to hash the password before saving
+personSchema.pre("save", async function(next) {
+    const person = this;
+    
+    // Hash the password if it has been modified
+    if (!person.isModified("password")) return next();
+    
+    try {
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(person.password, salt);
+        person.password = hashedPassword;
+        next();
+    } catch (err) {
+        return next(err);
+    }
+});
 
-module.exports = Person
+// Method to compare passwords
+personSchema.methods.comparePassword = async function(candidatePassword) {
+    try {
+        return await bcrypt.compare(candidatePassword, this.password);
+    } catch (err) {
+        throw err;
+    }
+};
+
+// Define the model after configuring the schema
+const Person = mongoose.model("person", personSchema);
+
+module.exports = Person;

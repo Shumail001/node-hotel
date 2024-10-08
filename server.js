@@ -2,6 +2,8 @@ const express = require("express")
 
 const app = express();
 
+const passport = require("./auth")
+const {jwtAuthMiddleware,generateToken} = require("./jwt")
 
 const db = require("./db")
 require("dotenv").config();
@@ -14,9 +16,18 @@ const menuRouter = require("./routes/menuItemsRoutes")
 
 app.use(express.json())
 
-app.get("/", (req,res) => {
-    return res.end("This is Home Page");
+
+app.use(passport.initialize());
+
+
+const localAuthMiddleware = passport.authenticate("local", {session: false})
+
+// app.use(localAuthMiddleware)
+
+app.get("/",jwtAuthMiddleware,  (req,res) => {
+    return res.send("This is Home Page");
 })
+
 
 
 app.use("/person",router)

@@ -5,7 +5,7 @@ const menuItemSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    price:{
+    rice:{
         type: Number,
         required: true,
     },
